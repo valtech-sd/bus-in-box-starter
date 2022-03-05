@@ -1,0 +1,23 @@
+{
+  "name": "circuitPlayground",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "devices:list": "serialport-list",
+    "start": "node sample.js"
+  },
+  "dependencies": {
+    "boxen": "^6.2.1",
+    "chalk": "^5.0.0",
+    "cli-cursor": "^4.0.0",
+    "node-fetch": "^3.2.0",
+    "serialport": "^9.2.8",
+    "underscore": "^1.13.2"
+  },
+  "devDependencies": {
+    "@serialport/list": "^9.2.8"
+  }
+}

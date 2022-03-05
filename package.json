@@ -1,0 +1,12 @@
+{
+  "name": "interactives-playground-demo",
+  "version": "1.0.0",
+  "author": "Cameron Perry <cameron.perry@valtech.com>",
+  "license": "NONE",
+  "private": true,
+  "workspaces": [
+    "rules-engine",
+    "web-client",
+    "embedded"
+  ]
+}
