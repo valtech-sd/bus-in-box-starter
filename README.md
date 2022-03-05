@@ -14,8 +14,9 @@ The general systems architecture builds into a RabbitMQ (AMQP) message bus and a
 ---
 
 ## Sample Video
-Click to play...
-[![Working in action](/doc-images/demo.jpg)](/doc-images/demo.mp4 "Demo video")
+
+
+![Working in action](/doc-images/demo.gif)
 
 ## Web Interfaces
 
