@@ -3,7 +3,8 @@
 
 enum Command {
   None = '0',
-  Pulse = 'pulse'
+  Pulse = 'pulse',
+  Hold = 'hold'
 };
 
 

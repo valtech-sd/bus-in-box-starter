@@ -92,12 +92,14 @@ void readIncomingSerial(DeviceCommand *command) {
 
     if (err == DeserializationError::Ok) {
       String seq = incomingDoc["sequence"].as<String>();
+
       if(seq.compareTo("pulse") == 0){
         command->command = Pulse;
-      } else if (seq.compareTo("0") || seq.compareTo("none")) {
-          command->command = None;
+      } else if (seq.compareTo("0") == 0 || seq.compareTo("none") == 0) {
+        command->command = None;
+      } else if (seq.compareTo("hold") == 0) {
+        command->command = Hold;
       } else {
-      
       }
 
       if(incomingDoc["color"].isNull()){
@@ -149,6 +151,10 @@ void runPulse(int pin, uint32_t color, unsigned long time) {
   CircuitPlayground.setPixelColor(pin, dimmed.getHex());
 }
 
+void runHold(int pin, uint32_t color){
+  CircuitPlayground.setPixelColor(pin, color);
+}
+
 void clearLED(int pin) {
   CircuitPlayground.setPixelColor(pin, 0x000000);  
 }
@@ -156,7 +162,7 @@ void clearLED(int pin) {
 // the loop routine runs over and over again forever:
 void loop() {
   loopTime = millis();
-HsvColor hsv = HexToHsv(0x00ff00);
+  HsvColor hsv = HexToHsv(0x00ff00);
   /**
    * Incoming commands and effects
    */
@@ -191,7 +197,11 @@ HsvColor hsv = HexToHsv(0x00ff00);
       // To animate all separately, use the time relative to start.
       // To animate all in synchony, use the current millis() time.
       unsigned long elapsed = loopTime - fx->startTime;
-      runPulse(fx->pin, fx->color, elapsed);
+      if(fx->command == Pulse){
+        runPulse(fx->pin, fx->color, elapsed);
+      } else if (fx->command == Hold && fx->startTime == loopTime )  { // only needs to run once - LED will remain lit
+        runHold(fx->pin, fx->color);
+      }
     }
   }
 

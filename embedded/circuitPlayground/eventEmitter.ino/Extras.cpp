@@ -20,6 +20,7 @@ char* commandVal(Command command){
   switch(command) {
     case(None): return "0";
     case(Pulse): return "pulse";
+    case(Hold): return "hold";
   }
 }
 

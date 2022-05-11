@@ -16,7 +16,7 @@ Commands are sent over the serial interface in the following sample format:
   "sequence": "pulse",
   "position": 0,
   "duration": -1,
-  "color": "00ff00"
+  "color": "00ffff"
 }
 ```
 
@@ -28,7 +28,10 @@ Commands are sent over the serial interface in the following sample format:
 
 Sequences are named in the `Command` enum:
 * Pulse: `pulse` => Slowly fading Neopixel
+* Hold: `hold` => Steady color
 * None: `0` => turn off any existing commands for the given position
+
+Depending on new sequence names, you may need to increase the size of the incoming JSON Document in memory: `StaticJsonDocument<128> incomingDoc`.
 
 ## Configuring Effect Slots
 
