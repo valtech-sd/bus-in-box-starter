@@ -35,7 +35,7 @@ const setInputState = (state) => {
       location: state.switchButton ? "room1" : "zoneA",
       device: state.buttonA ? "deviceA" : "deviceB",
     };
-
+    const initialState = JSON.parse(JSON.stringify(state));
     // Sends state changes via HTTP to the rules engine ingest. While this is over HTTP, it's fesible to
     // configure an AMQP client to connect to the input exchange
     fetch('http://localhost:3333', {
@@ -43,9 +43,9 @@ const setInputState = (state) => {
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }
     }).then(res => {
-      printBox(JSON.stringify(state));
+      printBox(JSON.stringify(state), 'success');
     }).catch(err => {
-      printBox(JSON.stringify(state));
+      printBox(JSON.stringify(state), 'error');
     });
   }
   _inputState = state;
@@ -73,8 +73,16 @@ process.on('exit', (code) => {
   cliCursor.hide(false);
 });
 
-const printBox = (message) => {
-  const box = boxen(chalk.hex("#000000").bold(message), { title: 'Input Values', titleAlignment: 'center', textAlignment: 'left', backgroundColor: 'green', padding: 1 });
+const printBox = (message, status) => {
+  let color;
+  if (status === "error") {
+    color = 'red';
+  } else if (status === "success") {
+    color = 'green';
+  } else {
+    color = 'gray';
+  }
+  const box = boxen(chalk.hex("#000000").bold(message), { title: 'Input Values', titleAlignment: 'center', textAlignment: 'left', backgroundColor: color, padding: 1 });
   const height = box.split("\n").length;
   writeStream.moveCursor(0, -height);
 
@@ -86,7 +94,7 @@ const availableDevices = devices.filter(item => item.path.indexOf('/dev/tty.usbm
 let port;
 if (availableDevices.length) {
   port = new SerialPort(availableDevices[0].path, {
-    baudRate: 9600
+    baudRate: 57600
   });
 } else {
   console.error('No device available');
