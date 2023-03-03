@@ -17,6 +17,11 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@breejs/later@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@breejs/later/-/later-4.1.0.tgz#9246907f46cc9e9c9af37d791ab468d98921bcc1"
+  integrity sha512-QgGnZ9b7o4k0Ai1ZbTJWwZpZcFK9d+Gb+DyNt4UT9x6IEIs5HVu0iIlmgzGqN+t9MoJSpSPo9S/Mm51UtHr3JA==
+
 "@cspotcode/source-map-consumer@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-consumer/-/source-map-consumer-0.8.0.tgz#33bf4b7b39c178821606f669bbc447a6a629786b"
@@ -394,15 +399,14 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-amqp-cacoon@^3.0.3:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/amqp-cacoon/-/amqp-cacoon-3.1.0.tgz#a83e801eccb1cc588482ff29170db82f401f5706"
-  integrity sha512-ZbiC06OmQ6QVIG+qAvAwb8nihcpLfsHXjwZP//AVkvWdNYEt/KtFzXZc79kTz9fX6qfA0fNITcsKMlMV769VDw==
+amqp-cacoon@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/amqp-cacoon/-/amqp-cacoon-3.2.0.tgz#4a55177d87f011617c40c301d651879626b6e354"
+  integrity sha512-y5C2NN339d59qnPog91NnWU9vVDfkEoK2EqkimfeJerXeJHGU82l13B9JwlT9wXHWGAfs8ZIH+9aP/PCH+ZqSw==
   dependencies:
     amqp-connection-manager "~3.5.0"
     amqplib "^0.8.0"
     lodash "^4.17.21"
-    log4js "^6.4.4"
 
 amqp-connection-manager@~3.5.0:
   version "3.5.2"
@@ -943,15 +947,14 @@ core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
-coronado-bridge@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/coronado-bridge/-/coronado-bridge-2.0.0.tgz#b087e71eceb2daf42f4845762e7e3171ebfbfcf4"
-  integrity sha512-ZlKjBYMcScEJ9j0fgRim0RT3S7AGStmEB6GQ1FTxLFCWs3Dzs9DmMg6X1F3+wiiDlv8YwlY//8eu8ytLGom7Eg==
+coronado-bridge@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/coronado-bridge/-/coronado-bridge-2.1.0.tgz#da6425a712c96580127fdd5d2b1a816328b4ca16"
+  integrity sha512-abbScuuIlIp4Fit8CgQv/e5LSMDbnjw1ptGjPzD/6M2mius39qSecLOefXt7VI7OcckNxjuNQajcaB970PCtew==
   dependencies:
     connect-timeout "^1.9.0"
     cors "^2.8.5"
     express "^4.17.1"
-    log4js "^6.1.0"
 
 cors@^2.8.5:
   version "2.8.5"
@@ -1696,12 +1699,15 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-eventsource@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/eventsource/-/eventsource-1.1.0.tgz#00e8ca7c92109e94b0ddf32dac677d841028cfaf"
-  integrity sha512-VSJjT5oCNrFvCS6igjzPAt5hBzQ2qPBFIbJ03zLI9SE0mxwZpMw6BfJrbFHm1a141AavMEB8JHmBhWAd66PfCg==
-  dependencies:
-    original "^1.0.0"
+eventemitter3@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
+  integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
+
+eventsource@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/eventsource/-/eventsource-2.0.2.tgz#76dfcc02930fb2ff339520b6d290da573a9e8508"
+  integrity sha512-IzUmBGPR3+oUG9dUeXynyNmf91/3zUSJg1lCktzKw47OXuhco54U3r9B7O4XX+Rb1Itm9OZ2b0RkTs10bICOxA==
 
 execa@^5.1.1:
   version "5.1.1"
@@ -2129,10 +2135,10 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-husky@^7.0.4:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-7.0.4.tgz#242048245dc49c8fb1bf0cc7cfb98dd722531535"
-  integrity sha512-vbaCKN2QLtP/vD4yvs6iz6hBEo6wkSzs8HpRah1Z6aGmF2KW5PdYuAd7uX5a+OyBZHBhd+TFLqgjUgytQr4RvQ==
+husky@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-8.0.3.tgz#4936d7212e46d1dea28fef29bb3a108872cd9184"
+  integrity sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==
 
 iconv-lite@0.4.24:
   version "0.4.24"
@@ -2609,7 +2615,7 @@ log-update@^4.0.0:
     slice-ansi "^4.0.0"
     wrap-ansi "^6.2.0"
 
-log4js@^6.1.0, log4js@^6.3.0, log4js@^6.4.4:
+log4js@^6.3.0:
   version "6.4.6"
   resolved "https://registry.yarnpkg.com/log4js/-/log4js-6.4.6.tgz#1878aa3f09973298ecb441345fe9dd714e355c15"
   integrity sha512-1XMtRBZszmVZqPAOOWczH+Q94AI42mtNWjvjA5RduKTSWjEc56uOBbyM1CJnfN4Ym0wSd8cQ43zOojlSHgRDAw==
@@ -3023,13 +3029,6 @@ optionator@^0.9.1:
     type-check "^0.4.0"
     word-wrap "^1.2.3"
 
-original@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/original/-/original-1.0.2.tgz#e442a61cffe1c5fd20a65f3261c26663b303f25f"
-  integrity sha512-hyBVl6iqqUOJ8FqRe+l/gS8H+kKYjrEndd5Pm1MfBtsEKA038HkkdbAl/72EAXGyonD/PFsvmVG+EvcIpliMBg==
-  dependencies:
-    url-parse "^1.4.3"
-
 p-cancelable@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-1.1.0.tgz#d078d15a3af409220c886f1d9a0ca2e441ab26cc"
@@ -3055,6 +3054,19 @@ p-map@^4.0.0:
   integrity sha512-/bjOqmgETBYB5BoEeGVea8dmvHb2m9GLy1E9W43yeyfP6QQCZGFNa+XRceJEuDB6zqr+gKpIAmlLebMpykw/MQ==
   dependencies:
     aggregate-error "^3.0.0"
+
+p-queue@^7.3.0:
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/p-queue/-/p-queue-7.3.4.tgz#7ef7d89b6c1a0563596d98adbc9dc404e9ed4a84"
+  integrity sha512-esox8CWt0j9EZECFvkFl2WNPat8LN4t7WWeXq73D9ha0V96qPRufApZi4ZhPwXAln1uVVal429HVVKPa2X0yQg==
+  dependencies:
+    eventemitter3 "^4.0.7"
+    p-timeout "^5.0.2"
+
+p-timeout@^5.0.2:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/p-timeout/-/p-timeout-5.1.0.tgz#b3c691cf4415138ce2d9cfe071dba11f0fee085b"
+  integrity sha512-auFDyzzzGZZZdHz3BtET9VEz0SE/uMEAx7uWfGPucfzEwwe/xH0iVeZibQmANYE/hp9T2+UUZT5m+BKyrDp3Ew==
 
 p-try@^1.0.0:
   version "1.0.0"
@@ -3676,15 +3688,17 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-rule-harvester@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/rule-harvester/-/rule-harvester-2.2.2.tgz#2d196515bc15be2222704e5cbadd782fc83ed242"
-  integrity sha512-BU2GMHhrp21lVTSA6L6Zotku6o+xjj/eSwV0SYDMxml8vSBlF9CYg9drIdF7d15PVTw+cpqbYouGBDIX6+acUQ==
+rule-harvester@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/rule-harvester/-/rule-harvester-2.10.0.tgz#2b35a42cb76bb2bc5b5e783ac0fdde02922e54e5"
+  integrity sha512-BNqKfsE36+RgnLRE5V0ey3Ms3owQtsTI5ep7+jBcy4dXe6p+36vSxmI9tvzs30LmEap4JZfsmJn8T+bYnLY0pg==
   dependencies:
-    amqp-cacoon "^3.0.3"
-    coronado-bridge "^2.0.0"
+    "@breejs/later" "^4.1.0"
+    amqp-cacoon "^3.2.0"
+    coronado-bridge "^2.1.0"
     lodash "^4.17.21"
     log4js "^6.3.0"
+    p-queue "^7.3.0"
     rules-js "^1.0.0"
 
 rules-js@^1.0.0:
@@ -3877,13 +3891,13 @@ slice-ansi@^5.0.0:
     ansi-styles "^6.0.0"
     is-fullwidth-code-point "^4.0.0"
 
-sockjs-client@^1.5.2:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.6.0.tgz#e0277b8974558edcb557eafc7d3027ef6128d865"
-  integrity sha512-qVHJlyfdHFht3eBFZdKEXKTlb7I4IV41xnVNo8yUKA1UHcPJwgW2SvTq9LhnjjCywSkSK7c/e4nghU0GOoMCRQ==
+sockjs-client@^1.6.0:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/sockjs-client/-/sockjs-client-1.6.1.tgz#350b8eda42d6d52ddc030c39943364c11dcad806"
+  integrity sha512-2g0tjOR+fRs0amxENLi/q5TiJTqY+WXFOzb5UwXndlK6TO3U/mirZznpx6w34HVMoc3g7cY24yC/ZMIYnDlfkw==
   dependencies:
     debug "^3.2.7"
-    eventsource "^1.1.0"
+    eventsource "^2.0.2"
     faye-websocket "^0.11.4"
     inherits "^2.0.4"
     url-parse "^1.5.10"
@@ -4338,7 +4352,7 @@ url-parse-lax@^3.0.0:
   dependencies:
     prepend-http "^2.0.0"
 
-url-parse@^1.4.3, url-parse@^1.5.10, url-parse@~1.5.1:
+url-parse@^1.5.10, url-parse@~1.5.1:
   version "1.5.10"
   resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
   integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
