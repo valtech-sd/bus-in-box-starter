@@ -113,6 +113,8 @@ const Light: React.FC<LightProps> = ({ children, type }) => {
         const msg: ClientMessage = JSON.parse(blob.body);
 
         setMessage(msg);
+        console.info(qRef.current.split("/").pop(), msg)
+        
       } catch (err) {
         setStatusColor(errorColor);
         console.error(`Light ${type} err`, err);
