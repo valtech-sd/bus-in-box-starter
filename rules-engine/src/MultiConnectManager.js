@@ -233,6 +233,8 @@ class MultiConnectManager {
       // For this example, we will wait for the rules engine to respond, then we respond
       // to the Http request based on that!
       responseMode: CoreInputHttpResponseType.OutputAfterRulePass,
+      // responseMode: CoreInputHttpResponseType.OutputStaticResponse,
+
       // Note that if you instead choose 'CoreInputHttpResponseType.OutputStaticResponse'
       // then you must also set the staticHttpResponse object as follows: (this is not being
       // used in this example, but here for illustration purposes.)

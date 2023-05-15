@@ -43,12 +43,13 @@ module.exports = [
         topic = facts.data.topic;
       }
 
-      logger.info("🪢 Topic", topic, facts);
+      logger.info("🪢 🚀  Topic", topic, "//", facts);
+      facts.httpRequest;
       facts.amqpPublishAction = [
         {
           // REQUIRED: amqpPublishExchange is the exchange to send the message to
           amqpPublishExchange: amqpConfig.exampleExchangeOutput,
-          // REQUIRED: amqpMessageContent is set to whatever it is we want to publish to the broker
+          // REQUIRED: amqpMessageContent is set to whatever it is we want to publish to the broker. Must be a string, Buffer, ArrayBuffer, Array, or Array-like object
           amqpMessageContent: JSON.stringify(facts.data),
           // OPTIONAL: Routing key is used by PUBLISH and the Exchange to route the message to a queue
           // based on your RMQ Exchange/Queue configuration.
@@ -67,7 +68,8 @@ module.exports = [
         //   amqpPublishOptions: {}
         // }
       ];
-      logger.info("🐰 👋", JSON.stringify(facts.amqpPublishAction, undefined, 4));
+
+      logger.info("🪢 🚀  🐰 👋", facts);
 
       // Return the modified facts.
       return facts;

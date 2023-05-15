@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const amqpConfig = require('../../conf/amqp-config');
 const logger = require('../custom_logger');
+const { log } = require('console');
 
 
 /**
@@ -11,7 +12,8 @@ module.exports = [
   {
     name: 'incoming-http-request',
     handler(facts, context) {
-      return (
+      logger.info("🌤️ 😎 ", facts);
+      const isHttp = (
         (
           facts.httpRequest
           && facts.httpRequest.body
@@ -20,39 +22,56 @@ module.exports = [
         )
         && (!facts.amqpMessage)
       );
+      if (isHttp) {
+        logger.debug("🌤️ 😎 Yes, http");
+      } else {
+        logger.debug("🌤️ 😎 Not Http");
+      }
+      return isHttp;
     }
   },
   {
+    // This would be a good place to possibly check for some required data, if not other,
+    // more complex rules. Ideally we check for "is an a _particular_ kind of amqp message"
+    // and then act on that...
     name: 'isIncomingAmqp',
     handler(facts, context) {
-      logger.info("🚪 👋 isIncomingAmqp", facts);
+      logger.info("🚪 👋 isIncomingAmqp?", facts);
       if (facts.httpRequest) {
+        logger.info("🚪 👋 Nope (HTTP)");
+        return false;
+      } else if (!facts.amqpMessage) {
+        logger.info("🚪 👋 Nope (Something else)");
         return false;
       }
 
-      logger.info("??? ", facts.amqpMessage.amqpMessageFields.exchange === amqpConfig.exampleExchangeOutput, ">>", facts.amqpMessage.amqpMessageFields.exchange, "vs", amqpConfig.exampleExchangeOutput);
-      return (
+      logger.info("🚪 👋 Yes! isIncomingAmqp!");
+
+      logger.info("🚪 👋 ??? ", facts.amqpMessage.amqpMessageFields.exchange === amqpConfig.exampleExchangeOutput, ">>", facts.amqpMessage.amqpMessageFields.exchange, "vs", amqpConfig.exampleExchangeOutput);
+      const isActionable = (
         facts.amqpMessage &&
         facts.amqpMessage.amqpMessageFields &&
         facts.amqpMessage.amqpMessageFields.exchange &&
         facts.amqpMessage.amqpMessageFields.exchange !== amqpConfig.exampleExchangeOutput
       );
-
+      logger.info("🚪 👋 isActionable AMQP?", isActionable);
+      return isActionable;
     }
   },
   {
     name: 'is-control-activity',
     handler(facts, context) {
-      logger.debug('🎛️ --> ', facts,);
+      logger.debug('🎛️ --> is control activity?', facts,);
       const possibleInteractions = [
         "interaction",
         'motion',
         'button-press'
       ];
       if (facts && facts.data && possibleInteractions.indexOf(facts.data.event) > -1) {
-        logger.debug("✅");
+        logger.debug("🎛️ --> ✅ Yep");
         return true;
       }
+      logger.debug("🎛️ --> Nope");
       return false;
     }
   },

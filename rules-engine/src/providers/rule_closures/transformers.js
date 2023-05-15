@@ -85,9 +85,18 @@ module.exports = [
         } catch (e) {
           // Yikes. Something failed, so we throw the custom 'BridgeError' that the HTTP Input expects
           // to indicate a malformed message.
+          logger.err("🐰 🐇 Error reached", e.message);
           throw new ICoreHttpError(500, e.message, 'reformat-http-request ERROR');
         }
       }
+
+      facts.httpResponseAction = {
+        body: "Message received! 🏄‍♂️",
+        status: 200,
+        headers: {
+          // someHeader: 'SomeHeaderValue'
+        }
+      };
       // Return the changed object (or if it was not an AMQP input, we just return the same facts we received).
       return facts;
     },
@@ -98,18 +107,18 @@ module.exports = [
       logger.debug("💘 ~~~~~>>", facts);
       try {
         if (facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent) {
-          logger.warn("CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
+          logger.warn("💘 CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
           let data = facts.amqpMessage.amqpMessageContent;
           facts.data = JSON.parse(data);
-          console.log("Data facts", facts);
+          logger.info("💘 Data facts", facts);
         } else {
           facts.data = {};
         }
       } catch (err) {
         facts.data = {};
-        logger.error("Format-incoming-amqp", err);
+        logger.error("💘 Format-incoming-amqp", err);
       }
-      logger.info("Now processed", facts);
+      logger.info("💘 Now processed", facts);
       return facts;
     }
   },
@@ -119,7 +128,7 @@ module.exports = [
      */
     name: 'prepare-lighting',
     async handler(facts, context) {
-      logger.info("💡⚡️ 🛋 Prepare", facts);
+      logger.info("💡⚡️ 🛋 Prepare Lighting", facts);
       const location = facts.data.location;
       const device = facts.data.device;
 
@@ -131,7 +140,7 @@ module.exports = [
         facts.data.sequence = "single-glow";
       }
 
-      logger.info("🎯 target", device);
+      logger.info("💡⚡️ 🛋 🎯 target", device);
 
       if (device === "deviceA" && location === "room1") {
         facts.data.topic = "room";
