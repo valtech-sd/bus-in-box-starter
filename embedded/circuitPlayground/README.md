@@ -16,7 +16,8 @@ Commands are sent over the serial interface in the following sample format:
   "sequence": "pulse",
   "position": 0,
   "duration": -1,
-  "color": "00ffff"
+  "color": "00ffff",
+  "delay": 0
 }
 ```
 
@@ -31,7 +32,19 @@ Sequences are named in the `Command` enum:
 * Hold: `hold` => Steady color
 * None: `0` => turn off any existing commands for the given position
 
-Depending on new sequence names, you may need to increase the size of the incoming JSON Document in memory: `StaticJsonDocument<128> incomingDoc`.
+Depending on new sequence names, you may need to increase the size of the incoming JSON Document in memory: `StaticJsonDocument<192> incomingDoc`.
+
+## Sample Lighting Commands
+
+Turn the LED red for 2 seconds in position 0
+`{"sequence":"hold","position":0,"duration": 2000,"color": "FF0000"}`
+
+Pulse the LED, magenta indefinitely at position 1 after a 2 second delay
+`{"sequence":"pulse","position":1,"duration": -1,"color": "FF00FF", "delay": 2000}`
+
+Turn the LED off after 2 seconds (this could be helpful if any LEDs were turned on indefinitely)
+`{"sequence":"hold","position":2,"duration": 0,"color": "FF00FF", "delay": 2000}`
+
 
 ## Configuring Effect Slots
 

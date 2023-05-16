@@ -12,6 +12,7 @@ unsigned long EffectSlot::expiration(){
   if( duration == ULONG_MAX) {
     return  ULONG_MAX;
   } else {
+    //the delay should have no place here, as it should be incorporated into the start time
     return startTime + duration;
   }  
 }

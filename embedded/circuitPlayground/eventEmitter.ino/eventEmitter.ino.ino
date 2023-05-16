@@ -9,6 +9,8 @@ When connected to serial over USB, button presses and switch values are transmit
 in the format button A | button B | switch (values separated by pipe). The client
 application is responsible for processing the state/changes/etc so this device is 
 as dumb as possible.
+
+See the accompanying README for device controls and other helpful information
 */
 #include <Adafruit_CircuitPlayground.h>
 #include <ArduinoJson.h>
@@ -46,15 +48,15 @@ PinStatus priorButtonBState;
 
 #define NUM_FX 5
 EffectSlot effects[NUM_FX] = {
-  {0, EFFECT_0_LED, None, 0, 0},
-  {1, EFFECT_1_LED, None, 0, 0},
-  {2, EFFECT_2_LED, None, 0, 0},
-  {3, EFFECT_3_LED, None, 0, 0},
-  {4, EFFECT_4_LED, None, 0, 0},
+  {0, EFFECT_0_LED, None, 0, 0, 0},
+  {1, EFFECT_1_LED, None, 0, 0, 0},
+  {2, EFFECT_2_LED, None, 0, 0, 0},
+  {3, EFFECT_3_LED, None, 0, 0, 0},
+  {4, EFFECT_4_LED, None, 0, 0, 0},
 };
 
 unsigned long loopTime = 0;
-
+int runtimeLoopDelay = 50;
 // the setup routine runs once when you press reset:
 void setup() {
 
@@ -81,11 +83,11 @@ void readIncomingSerial(DeviceCommand *command) {
 
     // Allocate the JSON document
     // This one must be bigger than for the sender because it must store the strings
-    StaticJsonDocument<128> incomingDoc;
+    StaticJsonDocument<192> incomingDoc;
 
     // Using a ReadBufferingStream resolves an issue where program execution would pause on Serial input/deserialization
     // See https://arduinojson.org/v6/api/json/deserializejson/#performance
-    ReadBufferingStream bufferingStream(Serial, 64);
+    ReadBufferingStream bufferingStream(Serial, 192);
     
     // Read the JSON document from the "link" serial port
     DeserializationError err = deserializeJson(incomingDoc, bufferingStream);
@@ -117,6 +119,7 @@ void readIncomingSerial(DeviceCommand *command) {
       } else {
         command->position = incomingDoc["position"].as<int>();
       }
+
       if(!incomingDoc["duration"].isNull()){
         if( incomingDoc["duration"].as<long>() == -1){
           command->duration = ULONG_MAX; //for indefinite running
@@ -129,6 +132,11 @@ void readIncomingSerial(DeviceCommand *command) {
         command->command = None;
         command->position = -1;
       }
+
+      if(!incomingDoc["delay"].isNull() && incomingDoc["delay"].as<long>() >= 0){
+          command->delay = incomingDoc["delay"].as<unsigned long>();
+      } // else delay is default 0
+
     } else {
       // Flush all bytes in the "link" serial port buffer
       while (Serial.available() > 0) {
@@ -174,9 +182,10 @@ void loop() {
       EffectSlot *fx = &effects[ii];
       if(fx->position == incoming.position) {
         fx->command = incoming.command;
-        fx->startTime = loopTime; //reference start time
+        fx->startTime = loopTime + incoming.delay; //reference start time
         fx->duration = incoming.duration;
         fx->color = incoming.color;
+        fx->delay = incoming.delay;
         // This will set either the near-expiration time (millis), or maximum ulong value for "no expiration"
         unsigned long expiration = fx->expiration();
       }     
@@ -193,13 +202,13 @@ void loop() {
       clearLED(fx->pin);
     }
     
-    if(fx->command != None){
+    if(fx->command != None && fx->startTime <= loopTime){
       // To animate all separately, use the time relative to start.
       // To animate all in synchony, use the current millis() time.
       unsigned long elapsed = loopTime - fx->startTime;
       if(fx->command == Pulse){
         runPulse(fx->pin, fx->color, elapsed);
-      } else if (fx->command == Hold && fx->startTime == loopTime )  { // only needs to run once - LED will remain lit
+      } else if (fx->command == Hold )  { // Ideally we set only once when loopTime and startTime are equal, but with small ms delays in loops, we can't quite match exactly - would need some wiggle room
         runHold(fx->pin, fx->color);
       }
     }
@@ -245,5 +254,5 @@ void loop() {
     serializeJson(doc, Serial);
     Serial.println();
   }
-  delay(50);  // delay in between reads for stability
+  delay(runtimeLoopDelay);  // delay in between reads for stability
 }
