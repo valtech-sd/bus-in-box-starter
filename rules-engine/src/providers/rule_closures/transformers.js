@@ -107,18 +107,18 @@ module.exports = [
       logger.debug("💘 ~~~~~>>", facts);
       try {
         if (facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent) {
-          logger.warn("💘 CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
+          logger.debug("💘 CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
           let data = facts.amqpMessage.amqpMessageContent;
           facts.data = JSON.parse(data);
-          logger.info("💘 Data facts", facts);
+          logger.debug("💘 Data facts", facts);
         } else {
           facts.data = {};
         }
       } catch (err) {
         facts.data = {};
-        logger.error("💘 Format-incoming-amqp", err);
+        logger.debug("💘 Format-incoming-amqp", err);
       }
-      logger.info("💘 Now processed", facts);
+      logger.debug("💘 Now processed", facts);
       return facts;
     }
   },
@@ -128,7 +128,7 @@ module.exports = [
      */
     name: 'prepare-lighting',
     async handler(facts, context) {
-      logger.info("💡⚡️ 🛋 Prepare Lighting", facts);
+      logger.debug("💡⚡️ 🛋 Prepare Lighting", facts);
       const location = facts.data.location;
       const device = facts.data.device;
 
@@ -140,7 +140,7 @@ module.exports = [
         facts.data.sequence = "single-glow";
       }
 
-      logger.info("💡⚡️ 🛋 🎯 target", device);
+      logger.debug("💡⚡️ 🛋 🎯 target", device);
 
       if (device === "deviceA" && location === "room1") {
         facts.data.topic = "room";

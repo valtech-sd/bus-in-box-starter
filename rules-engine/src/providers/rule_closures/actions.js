@@ -42,8 +42,7 @@ module.exports = [
       if (facts && facts.data && facts.data.topic) {
         topic = facts.data.topic;
       }
-
-      logger.info("🪢 🚀  Topic", topic, "//", facts);
+      logger.info("🪢  🚀  Topic", topic, "//  amqpMessageContent:", facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent || "n/a");
       facts.httpRequest;
       facts.amqpPublishAction = [
         {
@@ -69,7 +68,7 @@ module.exports = [
         // }
       ];
 
-      logger.info("🪢 🚀  🐰 👋", facts);
+      logger.trace("🪢  🚀  🐰 👋", facts);
 
       // Return the modified facts.
       return facts;
