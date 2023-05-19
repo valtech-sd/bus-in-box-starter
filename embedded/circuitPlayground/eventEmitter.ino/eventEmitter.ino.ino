@@ -28,10 +28,15 @@ int EFFECT_1_LED = 8;
 int EFFECT_2_LED = 7;
 int EFFECT_3_LED = 6;
 int EFFECT_4_LED = 5;
+int EFFECT_5_LED = 4;
+int EFFECT_6_LED = 3;
+int EFFECT_7_LED = 2;
+int EFFECT_8_LED = 1;
+int EFFECT_9_LED = 0;
 
-int BUTTON_A_LED = 2;
-int BUTTON_B_LED = 1;
-int SWITCH_LED = 4;
+int BUTTON_A_LED = 0;
+int BUTTON_B_LED = 0;
+int SWITCH_LED = 13; //4;
 int REACTION_LED = 8;
 
 uint32_t LED_DEFAULT = 0xfebc2d; // should probably be black, but otherwise good for testing
@@ -46,21 +51,29 @@ PinStatus priorSwitchState;
 PinStatus priorButtonAState;
 PinStatus priorButtonBState;
 
-#define NUM_FX 5
+#define NUM_FX 10
 EffectSlot effects[NUM_FX] = {
+  // Top Half (USB at left)
   {0, EFFECT_0_LED, None, 0, 0, 0},
   {1, EFFECT_1_LED, None, 0, 0, 0},
   {2, EFFECT_2_LED, None, 0, 0, 0},
   {3, EFFECT_3_LED, None, 0, 0, 0},
   {4, EFFECT_4_LED, None, 0, 0, 0},
+
+  // Bottom half
+  {5, EFFECT_5_LED, None, 0, 0, 0},
+  {6, EFFECT_6_LED, None, 0, 0, 0},
+  {7, EFFECT_7_LED, None, 0, 0, 0},
+  {8, EFFECT_8_LED, None, 0, 0, 0},
+  {9, EFFECT_9_LED, None, 0, 0, 0},
 };
 
 unsigned long loopTime = 0;
-int runtimeLoopDelay = 50;
+int runtimeLoopDelay = 0;
 // the setup routine runs once when you press reset:
 void setup() {
 
-  // initialize serial communication at 9600 bits per second:
+  // initialize serial communication at 57600 bits per second:
   Serial.begin(57600);
   // make the pushbuttonA's pin an input:
   pinMode(pushButtonA, INPUT);
@@ -74,7 +87,7 @@ void setup() {
   priorSwitchState = digitalRead(switchButton);
 
   // CircuitPlayground.setPixelColor(REACTION_LED, REACTION_COLOR_1);
-  CircuitPlayground.setBrightness(20);
+  // CircuitPlayground.setBrightness(0);
 }
 
 void readIncomingSerial(DeviceCommand *command) {
@@ -177,6 +190,13 @@ void loop() {
 
   DeviceCommand incoming;
   readIncomingSerial(&incoming);
+
+  // if incoming.command == XYZ (eg Rainbow) {
+  //  ...
+  // } else ... basic ---> These could be broken down into more complex timing (though still limited to 5 slots)
+
+  //TODO: refactor this so we can use the fx configuration in different ways, keeping the setter the same
+  //TODO: ...for example setting a rainbow sequence
   if(incoming.command != None && incoming.position >= 0){
     for(int ii =0; ii < NUM_FX; ii++) {
       EffectSlot *fx = &effects[ii];
@@ -220,30 +240,22 @@ void loop() {
   PinStatus switchState = digitalRead(switchButton);
   bool switchChanged = switchState != priorSwitchState;
   priorSwitchState = switchState;
-  if (switchState == LOW) {
-    CircuitPlayground.setPixelColor(SWITCH_LED, 50, 0, 50);  // majenta
-  } else {
-    CircuitPlayground.setPixelColor(SWITCH_LED, 0, 128, 128);  //cyan
-  }
+  digitalWrite(13, switchState);
 
   PinStatus buttonAState = digitalRead(pushButtonA);
   bool buttonAChanged = priorButtonAState != buttonAState;
   priorButtonAState = buttonAState;
-  if (buttonAState == LOW) {
-    CircuitPlayground.setPixelColor(BUTTON_A_LED, 32, 32, 0);
-  } else {
-    CircuitPlayground.setPixelColor(BUTTON_A_LED, 0, 32, 32);
-  }
-
+  
   PinStatus buttonBState = digitalRead(pushButtonB);
   bool buttonBChanged = priorButtonBState != buttonBState;
   priorButtonBState = buttonBState;
-  if (buttonBState == LOW) {
-    CircuitPlayground.setPixelColor(BUTTON_B_LED, 32, 32, 0);
+  if (buttonAState == HIGH) {
+        CircuitPlayground.setPixelColor(BUTTON_A_LED, 0, 32, 32);
+  } else if (buttonBState == HIGH) {
+      CircuitPlayground.setPixelColor(BUTTON_B_LED, 0, 32, 32);
   } else {
-    CircuitPlayground.setPixelColor(BUTTON_B_LED, 0, 32, 32);
+        CircuitPlayground.setPixelColor(BUTTON_A_LED, 0, 0, 0);
   }
-
   if (
     switchChanged || buttonAChanged || buttonBChanged) {
     // See https://arduinojson.org/v6/assistant/ for sizing etc
