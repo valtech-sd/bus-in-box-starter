@@ -168,7 +168,57 @@ const rainbowRoad = () => {
   return [commands];
 };
 
+//From hex to hex
+const colorWheel = (from, to, duration) => {
+  let dur = parseInt(duration) > 0 ? parseInt(duration) : 1000;
+  const lights = 10;
+  const lightDuration = dur / lights * 2;
+  const delayMultiple = dur / lights * .5;
+  const tpl = { "sequence": "pulse", "position": 0, duration: lightDuration, "color": "FF0000", "delay": 0 };
+  const rgbFrom = Color.hexToRgb(from);
+  const rgbTo = Color.hexToRgb(to);
 
+  const hslFrom = Color.rgbToHsl(...rgbFrom);
+  const hslTo = Color.rgbToHsl(...rgbTo);
+
+  //the number of color stops between the start and stop value ~~> total 10 stops
+  const colors = Color.hslColorStops(hslFrom, hslTo, lights - 2).map(item => Color.hslToHex(item.h, item.s, item.l));
+  let commands = [];
+  for (let ii = 0; ii < lights; ii++) {
+    let command = Object.assign({}, tpl);
+    command.position = ii;
+    command.delay = delayMultiple * ii;
+    command.color = colors[ii];
+    commands.push(command);
+  }
+  return [commands];
+};
+
+const zipWheel = (from, to, duration) => {
+  let dur = parseInt(duration) > 0 ? parseInt(duration) : 250;
+  const lights = 10;
+  const lightDuration = dur / lights * .33;
+  const delayMultiple = dur / lights;
+  const tpl = { "sequence": "pulse", "position": 0, duration: lightDuration, "color": "FF0000", "delay": 0 };
+  const rgbFrom = Color.hexToRgb(from);
+  const rgbTo = Color.hexToRgb(to);
+
+  const hslFrom = Color.rgbToHsl(...rgbFrom);
+  const hslTo = Color.rgbToHsl(...rgbTo);
+
+  //the number of color stops between the start and stop value ~~> total 10 stops
+  const colors = Color.hslColorStops(hslFrom, hslTo, lights - 2).map(item => Color.hslToHex(item.h, item.s, item.l));
+
+  let commands = [];
+  for (let ii = 0; ii < lights; ii++) {
+    let command = Object.assign({}, tpl);
+    command.position = ii;
+    command.delay = delayMultiple * ii;
+    command.color = colors[ii];
+    commands.push(command);
+  }
+  return [commands];
+};
 const runSky = (sky, object, frameDuration) => {
   const lights = 5;
   const frames = 7;
@@ -196,7 +246,7 @@ const runSky = (sky, object, frameDuration) => {
 
 const runGround = (color, duration) => {
   const dur = parseInt(duration) >= -2 ? parseInt(duration) : 4000;
-  const tpl = { "sequence": "hold", "position": 0, duration, color, "delay": 0 };
+  const tpl = { "sequence": "hold", "position": 0, duration: dur, color, "delay": 0 };
   let commands = [];
   for (let ii = 9; ii >= 5; ii--) {
     let cmd = Object.assign({}, tpl);
@@ -247,26 +297,36 @@ boot();
 
 startListening((msg) => {
   let commandSet;
-  let frameLength = 1000;
+
   const key = msg.fields.routingKey;
   if (key === 'table') {
     const sky = "08bddd";
     const sun = "ffd23d";
     commandSet = runSky(sky, sun, 250);
     frameLength = 250;
-  } else if (key === 'room') {
+  } else if (key === 'roomZ') {
     const night = "2c0d91";
     const moon = "828282";
     commandSet = runSky(night, moon);
   } else {
-    // commandSet = rainbowRoad();
-    const sparkleColor = ["fcf803" /*yellow*/, "02e82c" /*green*/, "e83002"/*red*/, "e802c6" /*magenta*/, "2902e8"/*blue*/, "fc7b03" /*orange*/, "7303fc",/*purple*/];
-    commandSet = runSparkle(sparkleColor[Math.floor(Math.random() * sparkleColor.length)]);
+    try {
+      let randoCommand = [];
+      randoCommand.push(rainbowRoad());
 
-    // commandSet = runGround("02b116");
+      const sparkleColor = ["fcf803" /*yellow*/, "02e82c" /*green*/, "e83002"/*red*/, "e802c6" /*magenta*/, "2902e8"/*blue*/, "fc7b03" /*orange*/, "7303fc",/*purple*/];
+      randoCommand.push(runSparkle(sparkleColor[Math.floor(Math.random() * sparkleColor.length)]));
 
+      randoCommand.push(colorWheel("#FFF300", "#FF7000", 200));
+      randoCommand.push(runGround("02b116"));
+
+      const randIdx = Math.floor(Math.random() * randoCommand.length);
+      commandSet = randoCommand[randIdx];
+    } catch (err) {
+      logger.error(err);
+    }
   }
   if (commandSet) {
+    let frameLength = 1000;
     let sequencer = new CommandSequence(commandSet, frameLength, writeSequence);
     sequencer.animate();
   }
