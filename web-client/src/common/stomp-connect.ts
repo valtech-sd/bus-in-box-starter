@@ -8,7 +8,12 @@ import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 Object.assign(global, { WebSocket: require('websocket').w3cwebsocket });
 
 const mqExchange = '/exchange/control-events'; //topic ex
-const subscriptionQueue = `/exchange/control-events/`; // topic ex 
+
+// Note that for STOMP it doesn't seem to work by connecting to another queue. Instead,
+// it creates its own queue bound to the exchange - just for one web socket connection
+// that expires when the browser window disconnects. Other connection methods would
+// bind to the fx-queue instead.
+const subscriptionQueue = `/exchange/fx-exchange/`; // topic ex 
 
 // @ts-ignore
 // eslint-disable-next-line unused-imports/no-unused-vars
@@ -38,16 +43,19 @@ class Stomper {
     exchange: string = mqExchange,
     queue: string = subscriptionQueue
   ) => {
-    const client: Client = new Client();
+
     assert(exchange, 'Exchange cannot be empty');
     assert(queue, 'Queue cannot be empty');
+    
+    // console.log("Ex", exchange, `default [${mqExchange}]`);
+    // console.log("Queue", queue, `default [${subscriptionQueue}]`)
 
+    const client: Client = new Client();
     this.stompClient = client;
     this.exchange = exchange;
     this.queue = queue;
 
     const ls = localStorage.getItem('suffix');
-    console.log('locally', ls);
     this.suffix = ls || 'y';
 
     client.connectHeaders = {
@@ -62,11 +70,13 @@ class Stomper {
     client.onConnect = (frame) => {
       assert(this.stompClient, 'Missing client');
       assert(this.queue, 'Missing queue');
-
+      console.log(`Subscribing to ${this.queue}`);
       this.subscription = this.stompClient.subscribe(this.queue, (message) => {
         if (typeof this.onMessage === 'function') {
           this.onMessage(message);
         }
+      }, {
+        "auto-delete": "true"
       });
       this.stompClient.activate();
     };
@@ -90,8 +100,12 @@ class Stomper {
     this.stompClient.onWebSocketError = (frame) => {
       console.error('[ws]', frame);
     };
+    
+
     this.stompClient.onStompError = (frame) => {
       console.error('!!! Error frame', frame);
+      console.error('Broker reported error: ' + frame.headers['message']);
+      console.error('Additional details: ' + frame.body);
     };
   };
 

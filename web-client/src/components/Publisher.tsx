@@ -1,84 +1,67 @@
 import { MouseEvent, useEffect, useRef, useState } from 'react';
 
 import Stomper from '@/common/stomp-connect';
+import { PublishData, PublishParams } from '@/common/types/ClientTypes';
 
 const publishRoot = '/exchange/input-control';
 
 const Publisher = () => {
-  const stompRef = useRef<Stomper | null>(null);
+  const stompPublisherRef = useRef<Stomper | null>(null);
 
-  const publishAmbient = (e: MouseEvent) => {
-    console.info('Click', e);
-    const msg = {
-      event: 'interaction',
-      message: 'Hello World.',
-      publisherID: 'B3312',
-      sequence: 'single-glow',
-      location: "room1",
-      device: "deviceB"
+   const publishInteractive = (parameters?: PublishParams) => (e: MouseEvent) => {
+    console.log("Action params:",parameters);
+    let msg: PublishData = {
+      deviceId: parameters?.deviceId,
+      event: parameters?.event ? parameters.event : 'button-press',
+      deviceType: parameters?.deviceType || "deviceA",
     };
+    if(parameters?.value !== undefined) {
+      msg.value = parameters.value
+    }
+    msg.deviceId = parameters?.deviceId
+    
+    console.log("publishIntereactive", parameters, e);
 
-    console.log(JSON.stringify(msg, null, 4));
-    stompRef.current?.publish(msg, `${publishRoot}`);
+    stompPublisherRef.current?.publish(msg, `${publishRoot}`);
   };
 
-  const publishRoom = (e: MouseEvent) => {
-    const msg = {
-      event: 'motion',
-      sequence: 's1',
-      device: "deviceC"
-
-    };
-    stompRef.current?.publish(msg, `${publishRoot}`);
-  };
-
-  const publishInteractive = (e: MouseEvent) => {
-    const msg = {
-      event: 'button-press',
-      sequence: 's1',
-      device: "deviceA"
-
-    };
-    stompRef.current?.publish(msg, `${publishRoot}`);
-  };
 
   const [wsConnected, setWsConnected] = useState(false);
   const [bgColor, setBgColor] = useState('bg-gray-200');
+  const [controlBorder, setControlBorder] = useState('border-gray-200');
 
-  const connect = (e: any) => {
+  const connect = (_: any) => {
     console.warn('****************************************');
-    console.log('Connecting', e);
-
-    // console.log('Local', localStorage.getItem('suffix'));
-    console.log('Connecting to suffix');
-    stompRef.current?.configure(
+    stompPublisherRef.current?.configure(
       `${publishRoot}`,
       `${publishRoot}/`
     );
-    stompRef.current?.stompClient?.activate();
+    stompPublisherRef.current?.stompClient?.activate();
     setWsConnected(true);
   };
   
   useEffect(() => {
     if (wsConnected) {
-      setBgColor('bg-emerald-500');
+      // setBgColor('bg-emerald-500');
+      setBgColor('bg-white');
+      setControlBorder('border-emerald-400 border-2')
     } else {
       setBgColor('bg-gray-200');
     }
   }, [wsConnected]);
 
   useEffect(() => {
-    stompRef.current = new Stomper();
-    stompRef.current.onDisconnect = () => {
+    stompPublisherRef.current = new Stomper();
+    stompPublisherRef.current.onDisconnect = () => {
       setWsConnected(false);
     };
     return () => {
-      console.log('Bye');
+      console.info('Bye');
     };
   }, []);
   let connectStyle;
   if(wsConnected){
-    connectStyle = 'bg-emerald-100 border-2 border-lime-400'
+    connectStyle = 'bg-emerald-100 border-2 border-teal-400'
   } else {
     connectStyle = 'bg-gray-400 border-gray-600 hover:bg-emerald-400'
   }
@@ -86,8 +69,9 @@ const Publisher = () => {
   return (
     <div
       id="PublisherContainer"
-      className={`${bgColor} transition-all duration-500 p-2`}
+      className={`${bgColor} ${controlBorder} transition-all duration-500 p-2 rounded-xl `}
     >
+      {!wsConnected &&
       <button
         onClick={connect}
         className={`inline p-4 border ${connectStyle} rounded-xl`}
@@ -95,16 +79,39 @@ const Publisher = () => {
       >
         {`${wsConnected ? 'Connected' : 'Connect'}`}
       </button>
-      {wsConnected && <div className="inline ml-8">
-      <button onClick={publishAmbient} className={actionStyle}>
-        Ambient
-      </button>
-      <button onClick={publishRoom} className={actionStyle}>
-        Room
-      </button>
-      <button onClick={publishInteractive} className={actionStyle}>
-        Lamps
-      </button>
+}
+      {wsConnected && 
+      <div className="inline ml-8 inline-grid grid-cols-3 gap-8">
+        <button onClick={publishInteractive({deviceType:"taskButton", event: 'button-press', deviceId: "C0C0A"})} className={actionStyle + " text-lg"}>
+            Activate <br />
+            <span className="text-xs">(Collect Point)</span>
+          </button>
+
+          <button onClick={publishInteractive({deviceType:"rfid-reader", event: 'item-select', value: "tag-id-123", deviceId: "C0FFEE" })} className={actionStyle + " text-lg"}>
+            Select Item <br />
+            <span className="text-xs">(RFID Scan)</span>
+          </button>
+
+          <button onClick={publishInteractive({deviceType:"proximity", event: 'item-select', value: "item-c", deviceId: "F007"})} className={actionStyle + " text-lg"}>
+            Select Item <br />
+            <span className="text-xs">(Proximity Sensor)</span>
+          </button>
+    
+          <button onClick={publishInteractive({deviceType:"button-press", event: 'power-up', value: "100", deviceId: "F007"})} className={actionStyle + " text-lg"}>
+            Power Up! <br />
+            <span className="text-xs">(Proximity Sensor)</span>
+          </button>
+
+          <button onClick={publishInteractive({deviceType:"button-press", event: 'recharge', value: "100", deviceId: "F007"})} className={actionStyle + " text-lg"}>
+            Recharge <br />
+            <span className="text-xs">(Proximity Sensor)</span>
+          </button>
+
+          <button onClick={publishInteractive({deviceType:"taskButton", event: 'button-press', deviceId: "F007"})} className={actionStyle + " text-lg"}>
+            Default (Twinkle) <br />
+            <span className="text-xs">(Proximity Sensor)</span>
+          </button>
+
       </div>}
     </div>
   );

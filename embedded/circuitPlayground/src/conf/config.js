@@ -55,10 +55,13 @@ const amqpConfig = {
           : null,
     },
   },
-  exampleQueue: 'input-control',
-  exampleExchange: 'control-events',
-  exampleQueueOutput: 'input-control',
-  exampleExchangeOutput: 'control-events', // TOPIC
+  // exampleQueue: 'input-control',
+  // exampleExchange: 'control-events',
+  // exampleQueueOutput: 'input-control',
+  // exampleExchangeOutput: 'control-events',
+
+  effectsQueue: "fx-queue",
+  effectsExchange: "fx-exchange",
   exampleQueueRpcResponse: '', // not used in this sample. See https://github.com/valtech-sd/rule-harvester/ for directions and usage
 };
 

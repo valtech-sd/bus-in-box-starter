@@ -42,41 +42,37 @@ const configureAmqp = () => {
         // operation can depend on the prior operation having finished. This is important
         // when binding Queues to Exchanges, for example, because you need both the
         // Exchange and Queue to exist prior to trying to bind them together.
+        const exchange = amqpConfig.effectsExchange;
+        const queue = amqpConfig.effectsQueue;
+        const key = 'environment';
 
         // Make sure we have our example queue
-        await channel.assertQueue(amqpConfig.exampleQueue, {
+        await channel.assertQueue(queue, {
           autoDelete: true,
           durable: true,
         });
 
         // Make sure we have our example exchange
-        await channel.assertExchange(amqpConfig.exampleExchange, 'topic', {
+        await channel.assertExchange(exchange, 'topic', {
           autoDelete: false,
           durable: true,
         });
 
-        // Bind the new Exchange and Queue together
         await channel.bindQueue(
-          amqpConfig.exampleQueue,
-          amqpConfig.exampleExchange,
-          'table' // Empty routing key to match anything published without one! (Messages published into this
+          queue,
+          exchange,
+          key, //'' // 'table' // Empty routing key to match anything published without one! (Messages published into this
           // exchange without a routing key WILL be sent to the bound queue.
         );
-        logger.info(`${now()} Connected to exchange '${amqpConfig.exampleExchange}' and queue '${amqpConfig.exampleQueue}' on key 'table'`);
 
+        // Listen for no-key messages
         await channel.bindQueue(
-          amqpConfig.exampleQueue,
-          amqpConfig.exampleExchange,
-          'room' // Empty routing key to match anything published without one! (Messages published into this
+          queue,
+          exchange,
+          '' // 'table' // Empty routing key to match anything published without one! (Messages published into this
           // exchange without a routing key WILL be sent to the bound queue.
         );
-        // logger.info(`${now()} Connected to exchange '${amqpConfig.exampleExchange}' and queue '${amqpConfig.exampleQueue}' on key 'room'`);
-        // await channel.bindQueue(
-        //   amqpConfig.exampleQueue,
-        //   amqpConfig.exampleExchange,
-        //   '*' // a "*"* routing key to match everything published to the exchange!
-        // );
-        // logger.info(`${now()} Connected to exchange '${amqpConfig.exampleExchange}' and queue '${amqpConfig.exampleQueue}' on key '*'`);
+        logger.info(`${now()} Connected to exchange '${exchange}' and queue '${queue}' on key ${key ? key : 'n/a'}`);
 
       } catch (ex) {
         logger.error(`onChannelConnect ERROR: ${util.inspect(ex.message)}`);
@@ -98,13 +94,13 @@ async function startListening(messageHandler) {
     `About to register a consumer for your AMQP host "${amqpConfig.host}"`
   );
   amqpCacoon = configureAmqp(amqpConfig);
-  console.log(amqpCacoon.getConsumerChannel);
   // Connects and sets up a subscription channelWrapper
   await amqpCacoon.getConsumerChannel();
+  console.log("🦋 ", amqpCacoon.getConsumerChannel());
 
   // Register a consumer to consume single message at a time
   await amqpCacoon.registerConsumer(
-    amqpConfig.exampleQueue,
+    amqpConfig.effectsQueue,
     async (channelWrapper, msg) => {
       try {
         console.log(`${now()} Message content: ${msg.content.toString()}`);
@@ -114,6 +110,7 @@ async function startListening(messageHandler) {
         // ... Do other processing here
         channelWrapper.ack(msg); // To ack a messages
       } catch (e) {
+        logger.error("Error", e);
         // Some error happened in our handling of the message.
         // The bet practice is to NACK the message so that some other process retries!
         channelWrapper.nack(msg); // To nack a messages we could not handle (by default, will requeue)

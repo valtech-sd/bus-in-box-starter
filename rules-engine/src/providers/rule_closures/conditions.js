@@ -65,7 +65,10 @@ module.exports = [
       const possibleInteractions = [
         "interaction",
         'motion',
-        'button-press'
+        'button-press',
+        'item-select',
+        'power-up',
+        'recharge',
       ];
       if (facts && facts.data && possibleInteractions.indexOf(facts.data.event) > -1) {
         logger.debug("🎛️ --> ✅ Yep");

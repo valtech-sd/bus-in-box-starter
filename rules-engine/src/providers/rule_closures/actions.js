@@ -42,12 +42,16 @@ module.exports = [
       if (facts && facts.data && facts.data.topic) {
         topic = facts.data.topic;
       }
-      logger.info("🪢  🚀  Topic", topic, "//  amqpMessageContent:", facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent || "n/a");
+
+
+      const exchange = amqpConfig.effectsExchange;
+
+      logger.info("🪢  🚀  Topic", topic, facts.data.topic, "//  amqpMessageContent:", facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent || "n/a");
       facts.httpRequest;
       facts.amqpPublishAction = [
         {
           // REQUIRED: amqpPublishExchange is the exchange to send the message to
-          amqpPublishExchange: amqpConfig.exampleExchangeOutput,
+          amqpPublishExchange: exchange,
           // REQUIRED: amqpMessageContent is set to whatever it is we want to publish to the broker. Must be a string, Buffer, ArrayBuffer, Array, or Array-like object
           amqpMessageContent: JSON.stringify(facts.data),
           // OPTIONAL: Routing key is used by PUBLISH and the Exchange to route the message to a queue
