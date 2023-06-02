@@ -65,7 +65,7 @@ const Publisher = () => {
   } else {
     connectStyle = 'bg-gray-400 border-gray-600 hover:bg-emerald-400'
   }
-  const actionStyle = 'inline p-2 mx-4 bg-white/100 hover:bg-white/90 border-gray-200 hover:border-emerald-300 border border-2 rounded-xl p-4'
+  const actionStyle = 'inline p-3 mx-2 bg-white/100 hover:bg-white/90 border-gray-200 hover:border-emerald-300 border border-2 rounded-xl active:bg-emerald-200'
   return (
     <div
       id="PublisherContainer"
@@ -81,7 +81,7 @@ const Publisher = () => {
       </button>
 }
       {wsConnected && 
-      <div className="inline ml-8 inline-grid grid-cols-3 gap-8">
+      <div className="inline ml-8 inline-grid grid-cols-3 gap-2">
         <button onClick={publishInteractive({deviceType:"taskButton", event: 'button-press', deviceId: "C0C0A"})} className={actionStyle + " text-lg"}>
             Activate <br />
             <span className="text-xs">(Collect Point)</span>
