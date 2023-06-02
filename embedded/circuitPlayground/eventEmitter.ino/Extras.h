@@ -16,6 +16,7 @@ struct DeviceCommand {
   Command command = None;
   unsigned long startTime;
   unsigned long duration; //milliseconds. Pass -1 in the JSON ojbect to trigger "indefinite" (ULONG_MAX)
+  unsigned long delay = 1; //milliseconds delay before starting the effect
   uint32_t color; //hexadecimal 0x.... Pass a string hex color over serial, eg "ABCDEF"
 };
 
@@ -28,6 +29,7 @@ struct EffectSlot {
   Command command;// = None;
   unsigned long startTime;// = 0;
   unsigned long duration;// = 0;
+  unsigned long delay;// = 0;
   // DeviceCommand command;
   unsigned long expiration();
   uint32_t color; //hexadecimal hex color

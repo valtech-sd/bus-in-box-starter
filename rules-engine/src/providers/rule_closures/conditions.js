@@ -12,7 +12,7 @@ module.exports = [
   {
     name: 'incoming-http-request',
     handler(facts, context) {
-      logger.info("🌤️ 😎 ", facts);
+      logger.debug("🌤️ 😎 ", facts);
       const isHttp = (
         (
           facts.httpRequest
@@ -36,25 +36,25 @@ module.exports = [
     // and then act on that...
     name: 'isIncomingAmqp',
     handler(facts, context) {
-      logger.info("🚪 👋 isIncomingAmqp?", facts);
+      logger.trace("🚪 👋 isIncomingAmqp?", facts);
       if (facts.httpRequest) {
-        logger.info("🚪 👋 Nope (HTTP)");
+        logger.trace("🚪 👋 Nope (HTTP)");
         return false;
       } else if (!facts.amqpMessage) {
-        logger.info("🚪 👋 Nope (Something else)");
+        logger.trace("🚪 👋 Nope (Something else)");
         return false;
       }
 
-      logger.info("🚪 👋 Yes! isIncomingAmqp!");
+      logger.trace("🚪 👋 Yes! isIncomingAmqp!");
 
-      logger.info("🚪 👋 ??? ", facts.amqpMessage.amqpMessageFields.exchange === amqpConfig.exampleExchangeOutput, ">>", facts.amqpMessage.amqpMessageFields.exchange, "vs", amqpConfig.exampleExchangeOutput);
+      logger.trace("🚪 👋 ??? ", facts.amqpMessage.amqpMessageFields.exchange === amqpConfig.exampleExchangeOutput, ">>", facts.amqpMessage.amqpMessageFields.exchange, "vs", amqpConfig.exampleExchangeOutput);
       const isActionable = (
         facts.amqpMessage &&
         facts.amqpMessage.amqpMessageFields &&
         facts.amqpMessage.amqpMessageFields.exchange &&
         facts.amqpMessage.amqpMessageFields.exchange !== amqpConfig.exampleExchangeOutput
       );
-      logger.info("🚪 👋 isActionable AMQP?", isActionable);
+      logger.trace("🚪 👋 isActionable AMQP?", isActionable);
       return isActionable;
     }
   },
@@ -65,7 +65,10 @@ module.exports = [
       const possibleInteractions = [
         "interaction",
         'motion',
-        'button-press'
+        'button-press',
+        'item-select',
+        'power-up',
+        'recharge',
       ];
       if (facts && facts.data && possibleInteractions.indexOf(facts.data.event) > -1) {
         logger.debug("🎛️ --> ✅ Yep");

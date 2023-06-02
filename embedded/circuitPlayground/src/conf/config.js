@@ -1,5 +1,21 @@
-const secrets = require('./secrets.json');
-const fs = require('fs');
+import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
+
+import assert from 'assert';
+import path from 'path';
+import url from 'url';
+
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+/* 
+These may be the same ones used by the rules engine, or more appropriately
+another user in an externally-facing service.
+*/
+assert(process.env.AMQPUSERNAME, "Missing amqp username in .env");
+assert(process.env.AMQPPASSWORD, "Missing amqp password in .env");
+assert(process.env.AMQPCACERTNAME, "Missing amqp CA Cert file in .env");
+
+import fs from 'fs';
 
 // Enter either "amqp" or "amqps"
 const protocol = 'amqps';
@@ -8,8 +24,8 @@ const amqpConfig = {
   // Protocol should be "amqps" or "amqp"
   protocol: protocol,
   // Username + Password on the RabbitMQ host
-  username: secrets.amqpUsername,
-  password: secrets.amqpPassword,
+  username: process.env.AMQPUSERNAME,
+  password: process.env.AMQPPASSWORD,
   // Host
   host: 'localhost',
   // Port AMQPS=5671, AMQP=5672
@@ -33,20 +49,20 @@ const amqpConfig = {
         protocol === 'amqps'
           ? [
             fs.readFileSync(
-              __dirname + '/' + secrets.amqpCACertName || 'ca_certificate.pem'
+              __dirname + '/' + process.env.AMQPCACERTNAME || 'ca_certificate.pem'
             ),
           ]
           : null,
     },
   },
-  exampleQueue: 'input-control',
-  exampleExchange: 'input-control',
-  exampleQueueOutput: 'input-control',
-  exampleExchangeOutput: 'control-events',
-  effectsExchange: 'fx-exchange',
-  effectsQueue: 'fx-queue',
+  // exampleQueue: 'input-control',
+  // exampleExchange: 'control-events',
+  // exampleQueueOutput: 'input-control',
+  // exampleExchangeOutput: 'control-events',
 
+  effectsQueue: "fx-queue",
+  effectsExchange: "fx-exchange",
   exampleQueueRpcResponse: '', // not used in this sample. See https://github.com/valtech-sd/rule-harvester/ for directions and usage
 };
 
-module.exports = amqpConfig;
+export default amqpConfig;

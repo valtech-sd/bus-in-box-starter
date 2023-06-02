@@ -1,4 +1,4 @@
-const log4js = require('log4js');
+import log4js from 'log4js';
 
 // This is a simple logger that outputs to the console.
 // This implements log4js. Learn more at https://stritti.github.io/log4js/docu/users-guide.html
@@ -16,7 +16,6 @@ logger = log4js.getLogger('synchronous');
 // DEBUG - debug infos are logged
 // TRACE - traces are logged
 // ALL   - everything is logged
-// logger.level = 'all';
-logger.level = 'debug';
+logger.level = 'all';
 
-module.exports = logger;
+export { logger };

@@ -107,52 +107,61 @@ module.exports = [
       logger.debug("💘 ~~~~~>>", facts);
       try {
         if (facts && facts.amqpMessage && facts.amqpMessage.amqpMessageContent) {
-          logger.warn("💘 CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
+          logger.debug("💘 CONTENT IS", typeof facts.amqpMessage.amqpMessageContent);
           let data = facts.amqpMessage.amqpMessageContent;
           facts.data = JSON.parse(data);
-          logger.info("💘 Data facts", facts);
+          logger.debug("💘 Data facts", facts);
         } else {
           facts.data = {};
         }
       } catch (err) {
         facts.data = {};
-        logger.error("💘 Format-incoming-amqp", err);
+        logger.debug("💘 Format-incoming-amqp", err);
       }
-      logger.info("💘 Now processed", facts);
+      logger.debug("💘 Now processed", facts);
       return facts;
     }
   },
   {
     /**
      * Take the incoming, transform the data into actionable items for the recipients
+     * This is just a sample to get going. Expect conditions where more work will
+     * need to be done before a message is fully prepared and ready to move on.
      */
     name: 'prepare-lighting',
     async handler(facts, context) {
-      logger.info("💡⚡️ 🛋 Prepare Lighting", facts);
+      logger.debug("💡⚡️ 🛋 Prepare Lighting", facts);
       const location = facts.data.location;
-      const device = facts.data.device;
+      const deviceType = facts.data.deviceType;
+      const event = facts.data.event;
 
-      if (location === "room1") {
-        facts.data.sequence = "s1";
-      } else if (location === "zoneA") {
-        facts.data.sequence = "single-glow";
-      } else {
-        facts.data.sequence = "single-glow";
+      const pointEarningDevices = ["C0C0A"];
+
+      // Make sure to check the conditions.js for the "allowed" event types
+      if (deviceType === "taskButton"
+        && event === "button-press"
+        && pointEarningDevices.indexOf(facts.data.deviceId) > -1) {
+        facts.data.sequence = "point";
+        facts.data.value = 1;
+        facts.data.topic = "environment";
+        logger.info("🔘 👇");
+      } else if (deviceType === 'rfid-reader' && event === "item-select") {
+        facts.data.sequence = "selection";
+        facts.data.topic = ''; //implied, as it should be empty by default
+
+        // Idea: You can even set up different topics for types outputs
+      } else if (deviceType === 'proximity' && event === "item-select") {
+        facts.data.sequence = "glow";
+        facts.data.topic = "environment";
+
+      } else if (event === "recharge" || event === "power-up") {
+        // { deviceType: "button-press", event: "power-up", value: "100", deviceId: "F007"; }
+        logger.warn("🎍 powering up?", facts.data);
+
+        facts.data.sequence = event;
+        facts.data.topic = "environment";
       }
 
-      logger.info("💡⚡️ 🛋 🎯 target", device);
-
-      if (device === "deviceA" && location === "room1") {
-        facts.data.topic = "room";
-      } else if (device === "deviceA") {
-        facts.data.topic = "table";
-      } else if (device === "deviceB") {
-        facts.data.topic = "ambient";
-      } else if (device === "deviceC") {
-        facts.data.topic = "room";
-      } else {
-        facts.data.topic = "";
-      }
 
       logger.debug("💡 🔦", facts);
 
